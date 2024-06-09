@@ -1,6 +1,6 @@
 using Orleans.Runtime;
 
-namespace Eggs.Api.Grains;
+namespace Eggs.Api.Grains.TrafficCameraManagement;
 
 public sealed class TrafficCameraManagementGrain(
     [PersistentState("TrafficCameraManagement", "traffic-camera-management")]

@@ -1,5 +1,5 @@
 using Eggs.Api.Extensions;
-using Eggs.Api.Grains;
+using Eggs.Api.Grains.TrafficCamera;
 using Orleans.Runtime;
 
 namespace Eggs.Api.StartupTasks;

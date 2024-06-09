@@ -1,5 +1,5 @@
 using Bogus;
-using Eggs.Api.Grains;
+using Eggs.Api.Grains.TrafficCamera;
 
 namespace Eggs.Api.Extensions;
 
@@ -13,6 +13,6 @@ public static class TrafficCameraStateFakerExtensions
             .RuleFor(t => t.Location, (f, p) => f.Address.FullAddress())
             .RuleFor(t => t.Longitude, (f, p) => f.Address.Longitude())
             .RuleFor(t => t.Latitude, (f, p) => f.Address.Latitude())
-            .RuleFor(t => t.FirstSeen, (f, p) => f.Date.PastOffset())
-            .RuleFor(t => t.LastSeen, (f, p) => DateTimeOffset.Now);
+            .RuleFor(t => t.FirstSeenAt, (f, p) => f.Date.PastOffset())
+            .RuleFor(t => t.LastSeenAt, (f, p) => DateTimeOffset.Now);
 }

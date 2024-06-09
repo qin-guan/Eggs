@@ -1,19 +1,20 @@
-using Eggs.Api.Grains;
+using Eggs.Api.Grains.TrafficCamera;
+using Eggs.Api.Grains.TrafficCameraManagement;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Eggs.Api.Endpoints;
 
-public static class CameraEndpoints
+public static class TrafficCamera
 {
     public static IEndpointRouteBuilder MapCameraEndpoints(this IEndpointRouteBuilder app)
     {
-        var api = app.MapGroup("cameras");
-        api.MapGet("/", GetCameras);
+        var api = app.MapGroup("traffic-cameras");
+        api.MapGet("/", GetTrafficCameras);
 
         return app;
     }
 
-    private static async Task<Ok<List<TrafficCameraState>>> GetCameras(
+    private static async Task<Ok<List<TrafficCameraState>>> GetTrafficCameras(
         IGrainFactory grainFactory
     )
     {

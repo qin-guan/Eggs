@@ -1,9 +1,11 @@
+using Eggs.Api.Grains.TrafficCameraManagement;
 using Orleans.Runtime;
 
-namespace Eggs.Api.Grains;
+namespace Eggs.Api.Grains.TrafficCamera;
 
 public sealed class TrafficCameraGrain(
-    [PersistentState("TrafficCamera", "traffic-camera")] IPersistentState<TrafficCameraState> state
+    [PersistentState("TrafficCamera", "traffic-camera")]
+    IPersistentState<TrafficCameraState> state
 ) : Grain, ITrafficCameraGrain
 {
     public Task<TrafficCameraState> GetStateAsync()
@@ -19,9 +21,14 @@ public sealed class TrafficCameraGrain(
         await state.WriteStateAsync();
     }
 
-    public Task UpdateLastSeenAsync()
+    public Task UpdateLastSeenAtAsync()
     {
-        state.State.LastSeen = DateTimeOffset.Now;
+        state.State.LastSeenAt = DateTimeOffset.Now;
         return Task.CompletedTask;
+    }
+
+    public async Task DetectedVehicleAsync(string id)
+    {
+        throw new NotImplementedException();
     }
 }

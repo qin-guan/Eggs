@@ -1,4 +1,4 @@
-namespace Eggs.Api.Grains;
+namespace Eggs.Api.Grains.TrafficCameraManagement;
 
 public interface ITrafficCameraManagementGrain : IGrainWithIntegerKey
 {
