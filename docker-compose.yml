@@ -1,0 +1,6 @@
+﻿services:
+  eggs.api:
+    image: eggs.api
+    build:
+      context: .
+      dockerfile: Eggs.Api/Dockerfile

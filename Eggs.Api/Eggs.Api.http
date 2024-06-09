@@ -1,0 +1,6 @@
+@Eggs.Api_HostAddress = https://localhost:7223
+
+GET {{Eggs.Api_HostAddress}}/cameras
+Accept: application/json
+
+###
