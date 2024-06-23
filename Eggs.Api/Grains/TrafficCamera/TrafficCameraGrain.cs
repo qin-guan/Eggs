@@ -1,4 +1,5 @@
-using Eggs.Api.Grains.TrafficCameraManagement;
+using Eggs.Api.Grains.Sighting;
+using Eggs.Api.Grains.TrafficCameraManager;
 using Orleans.Runtime;
 
 namespace Eggs.Api.Grains.TrafficCamera;
@@ -8,27 +9,57 @@ public sealed class TrafficCameraGrain(
     IPersistentState<TrafficCameraState> state
 ) : Grain, ITrafficCameraGrain
 {
-    public Task<TrafficCameraState> GetStateAsync()
+    public async Task CreateAsync(TrafficCameraState initialState)
     {
+        state.State = initialState;
+        await state.WriteStateAsync();
+
+        var manager = GrainFactory.GetGrain<ITrafficCameraManagerGrain>(0);
+        await manager.AddTrafficCameraAsync(this.GetPrimaryKeyString());
+    }
+
+    public Task<TrafficCameraState> GetAsync()
+    {
+        if (string.IsNullOrEmpty(state.State.Id))
+        {
+            throw new Exception("TrafficCameraGrain was called before created.");
+        }
+
         return Task.FromResult(state.State);
     }
 
-    public async Task CreateTrafficCameraAsync(TrafficCameraState initialState)
+    public async Task UpdateLastSeenAtAsync()
     {
-        state.State = initialState;
-        var management = GrainFactory.GetGrain<ITrafficCameraManagementGrain>(0);
-        await management.AddTrafficCameraAsync(this.GetPrimaryKeyString());
+        if (string.IsNullOrEmpty(state.State.Id))
+        {
+            throw new Exception("TrafficCameraGrain was called before created.");
+        }
+
+        state.State.LastSeenAt = DateTimeOffset.Now;
         await state.WriteStateAsync();
     }
 
-    public Task UpdateLastSeenAtAsync()
+    public async Task<Guid> AddSightingAsync(string vehicleId)
     {
-        state.State.LastSeenAt = DateTimeOffset.Now;
-        return Task.CompletedTask;
-    }
+        if (string.IsNullOrEmpty(state.State.Id))
+        {
+            throw new Exception("TrafficCameraGrain was called before created.");
+        }
 
-    public async Task DetectedVehicleAsync(string id)
-    {
-        throw new NotImplementedException();
+        var sightingId = Guid.NewGuid();
+        var sighting = GrainFactory.GetGrain<ISightingGrain>(sightingId);
+
+        await sighting.CreateAsync(
+            new SightingState
+            {
+                Id = sightingId,
+                Vehicle = vehicleId,
+                TrafficCamera = this.GetPrimaryKeyString(),
+                Lane = 0,
+                CreatedAt = DateTimeOffset.Now
+            }
+        );
+
+        return sightingId;
     }
 }

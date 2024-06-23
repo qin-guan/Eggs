@@ -11,4 +11,5 @@ public class TrafficCameraState
     [Id(4)] public double Longitude { get; set; }
     [Id(5)] public DateTimeOffset FirstSeenAt { get; set; }
     [Id(6)] public DateTimeOffset LastSeenAt { get; set; }
+    [Id(7)] public List<Guid> Sightings { get; set; }
 }

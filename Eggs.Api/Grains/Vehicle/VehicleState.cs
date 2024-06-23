@@ -21,9 +21,13 @@ public class VehicleState
     [Id(5)] public DateTimeOffset LastSeenAt { get; set; }
     [Id(6)] public string LastSeenAtTrafficCamera { get; set; }
 
+    [Id(7)] public List<Guid> Charges { get; set; }
+    
+    [Id(8)] public List<Guid> Sightings { get; set; }
+
     /// <summary>
     /// <see cref="Eggs.Api.Grains.User.IUserGrain"/> to associate to once the vehicle has been claimed.
     /// </summary>
-    [Id(7)]
+    [Id(9)]
     public string? User { get; set; }
 }

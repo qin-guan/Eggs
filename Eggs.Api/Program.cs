@@ -1,8 +1,10 @@
+using Azure.Storage.Queues;
+using Eggs.Api.Constants;
 using Eggs.Api.Endpoints;
 using Eggs.Api.Options;
 using Eggs.Api.StartupTasks;
 using Eggs.ServiceDefaults;
-using Orleans.Runtime;
+using Orleans.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,11 +47,25 @@ builder.Services.AddOptions<ChargeOptions>()
     .ValidateOnStart();
 
 builder.AddKeyedAzureTableClient("clustering");
+
+builder.AddKeyedAzureBlobClient(ProviderConstants.DEFAULT_PUBSUB_PROVIDER_NAME);
+builder.AddKeyedAzureBlobClient("charge");
+builder.AddKeyedAzureBlobClient("charge-log-storage");
+builder.AddKeyedAzureBlobClient("sighting");
+builder.AddKeyedAzureBlobClient("vehicle");
 builder.AddKeyedAzureBlobClient("traffic-camera");
-builder.AddKeyedAzureBlobClient("traffic-camera-management");
+builder.AddKeyedAzureBlobClient("traffic-camera-manager");
 
 builder.UseOrleans((orleans) =>
 {
+    orleans.UseTransactions();
+    orleans.UseDashboard(options => { options.Port = 18080; });
+
+    orleans.AddLogStorageBasedLogConsistencyProvider("charge-log-storage");
+    orleans.AddAzureQueueStreams(StreamConstants.DefaultProvider, optionsBuilder => optionsBuilder.Configure(options =>
+        options.QueueServiceClient =
+            new QueueServiceClient(builder.Configuration.GetConnectionString("charge-events"))));
+
     if (builder.Environment.IsDevelopment())
     {
         orleans.AddStartupTask<SeedTrafficCameraData>();
@@ -72,56 +88,6 @@ app.UseHttpsRedirection();
 app.MapDefaultEndpoints();
 
 app.MapCameraEndpoints();
+app.MapSightingsEndpoints();
 
 app.Run();
-
-namespace Eggs.Api
-{
-    public interface ICarPlateGrain : IGrainWithStringKey
-    {
-    }
-
-    public sealed class CarPlateGrain(
-    ) : ICarPlateGrain
-    {
-    }
-
-    public interface ICarPlateChargeGrain : IGrainWithGuidKey
-    {
-        public ValueTask IncurCharge(ICarPlateGrain carPlate, string location);
-        public ValueTask<ICarPlateGrain> GetCarPlate();
-    }
-
-    public sealed class CarPlateChargeGrain(
-        [PersistentState(stateName: "charge", storageName: "storage")]
-        IPersistentState<CarPlateChargeDetails> state
-    ) : ICarPlateChargeGrain
-    {
-        private ICarPlateGrain _carPlate;
-
-        public async ValueTask IncurCharge(ICarPlateGrain carPlate, string location)
-        {
-            _carPlate = carPlate;
-
-            state.State = new CarPlateChargeDetails
-            {
-                Location = location
-            };
-
-            await state.WriteStateAsync();
-        }
-
-        public ValueTask<ICarPlateGrain> GetCarPlate()
-        {
-            return ValueTask.FromResult(_carPlate);
-        }
-    }
-
-    [GenerateSerializer, Alias(nameof(CarPlateChargeDetails))]
-    public sealed record class CarPlateChargeDetails
-    {
-        [Id(0)] public DateTimeOffset ChargeDateTime { get; set; } = DateTimeOffset.Now;
-
-        [Id(1)] public string Location { get; set; }
-    }
-}

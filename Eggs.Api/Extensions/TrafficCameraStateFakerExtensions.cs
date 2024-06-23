@@ -14,5 +14,6 @@ public static class TrafficCameraStateFakerExtensions
             .RuleFor(t => t.Longitude, (f, p) => f.Address.Longitude())
             .RuleFor(t => t.Latitude, (f, p) => f.Address.Latitude())
             .RuleFor(t => t.FirstSeenAt, (f, p) => f.Date.PastOffset())
-            .RuleFor(t => t.LastSeenAt, (f, p) => DateTimeOffset.Now);
+            .RuleFor(t => t.LastSeenAt, (f, p) => DateTimeOffset.Now)
+            .RuleFor(t => t.Sightings, (f, p) => []);
 }

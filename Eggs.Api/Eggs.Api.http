@@ -1,6 +1,19 @@
 @Eggs.Api_HostAddress = https://localhost:7223
+@Eggs.Traffic_Camera_Id = 01-default
+@Eggs.Sighting_Id=6c388f8b-ae6b-4515-a485-4ccfed61ff76
+@Eggs.Vehicle_Id=SGH1111H
 
-GET {{Eggs.Api_HostAddress}}/cameras
+GET {{Eggs.Api_HostAddress}}/traffic-cameras
 Accept: application/json
 
 ###
+
+POST {{Eggs.Api_HostAddress}}/traffic-cameras/{{Eggs.Traffic_Camera_Id}}/sightings/{{Eggs.Vehicle_Id}}
+Content-Type: application/json
+Accept: application/json
+
+###
+
+GET {{Eggs.Api_HostAddress}}/sightings?vehicleId={{Eggs.Vehicle_Id}}
+Accept: application/json
+

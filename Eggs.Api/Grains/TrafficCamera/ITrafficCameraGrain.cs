@@ -2,8 +2,8 @@ namespace Eggs.Api.Grains.TrafficCamera;
 
 public interface ITrafficCameraGrain : IGrainWithStringKey
 {
-    public Task<TrafficCameraState> GetStateAsync();
-    public Task CreateTrafficCameraAsync(TrafficCameraState state);
+    public Task CreateAsync(TrafficCameraState initialState);
+    public Task<TrafficCameraState> GetAsync();
     public Task UpdateLastSeenAtAsync();
-    public Task DetectedVehicleAsync(string id);
+    public Task<Guid> AddSightingAsync(string vehicleId);
 }

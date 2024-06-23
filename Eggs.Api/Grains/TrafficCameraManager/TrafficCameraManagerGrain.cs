@@ -1,11 +1,11 @@
 using Orleans.Runtime;
 
-namespace Eggs.Api.Grains.TrafficCameraManagement;
+namespace Eggs.Api.Grains.TrafficCameraManager;
 
-public sealed class TrafficCameraManagementGrain(
-    [PersistentState("TrafficCameraManagement", "traffic-camera-management")]
+public sealed class TrafficCameraManagerGrain(
+    [PersistentState("TrafficCameraManager", "traffic-camera-manager")]
     IPersistentState<HashSet<string>> state
-) : Grain, ITrafficCameraManagementGrain
+) : Grain, ITrafficCameraManagerGrain
 {
     public Task<HashSet<string>> GetTrafficCamerasAsync()
     {
