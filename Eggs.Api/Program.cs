@@ -14,7 +14,7 @@ builder.Services.AddOptions<ChargeOptions>()
     .Bind(builder.Configuration.GetSection("ChargeOptions"))
     .Validate((options) =>
     {
-        foreach (var (camera, dayConfig)in options.Rules)
+        foreach (var (camera, dayConfig) in options.Rules)
         {
             foreach (var (day, vehicleConfig) in dayConfig)
             {

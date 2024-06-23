@@ -22,7 +22,7 @@ public class VehicleState
     [Id(6)] public string LastSeenAtTrafficCamera { get; set; }
 
     [Id(7)] public List<Guid> Charges { get; set; }
-    
+
     [Id(8)] public List<Guid> Sightings { get; set; }
 
     /// <summary>

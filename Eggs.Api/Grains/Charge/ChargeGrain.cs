@@ -19,7 +19,7 @@ public sealed class ChargeGrain(
         var sighting = await sightingGrain.GetAsync();
         var vehicleGrain = GrainFactory.GetGrain<IVehicleGrain>(sighting.Vehicle);
         await vehicleGrain.AddChargeAsync(this.GetPrimaryKey());
-        
+
         RaiseEvent(@event);
         await ConfirmEvents();
     }
